@@ -8,7 +8,7 @@ const cart = [
 
 function showCartItems(cart){
   for (let i = 0; i < cart.length; i++) {
-    let subtotal = cart[i].price * cart[i].quantity;
+    const subtotal = cart[i].price * cart[i].quantity;
     console.log(`${cart[i].name} = ${subtotal}`);
   }
 }
@@ -16,14 +16,33 @@ function showCartItems(cart){
 function getTotalPrice(cart){
   let totalPrice = 0;
   for (let i = 0; i < cart.length; i++) {
-    totalPrice += cart[i].price;
+    totalPrice += cart[i].price * cart[i].quantity;
   }
-  console.log(totalPrice);
+  return totalPrice;
 }
 
-function getTotalItem(cart){
-  
+function getTotalItems(cart){
+  let totalItem = 0;
+  for (let i = 0; i < cart.length; i++) {
+    totalItem += cart[i].quantity;
+  }
+  return totalItem;
 }
+
+function getMostExpensiveItem(cart) {
+  let mostExpensiveItem = cart[0];
+  for (let i = 0; i < cart.length; i++) {
+    if (mostExpensiveItem.price < cart[i].price) {
+      mostExpensiveItem = cart[i];
+    }
+  }
+  return mostExpensiveItem.name;
+}
+
+console.log("=== Shopping Cart ===\n");
 
 showCartItems(cart);
-getTotalPrice(cart);
+
+console.log("\nTotal Belanja:", getTotalPrice(cart));
+console.log("Total Item:", getTotalItems(cart));
+console.log("Barang Termahal:", getMostExpensiveItem(cart));
