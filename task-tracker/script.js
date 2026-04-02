@@ -38,7 +38,15 @@ switch (command) {
     break;
   case "list":
     console.log("Menampilkan task...");
-    console.log(tasks);
+
+    if(tasks.length == 0){
+      console.log("Belum ada task.")
+    }else{
+      tasks.forEach(task => {
+        console.log(`${task.id}. [${task.status}] ${task.description}`);
+      });
+    }
+
     break;
   case "update":
     console.log("Memperbarui task...");

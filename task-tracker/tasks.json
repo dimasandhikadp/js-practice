@@ -12,5 +12,12 @@
     "status": "todo",
     "createdAt": "2026-04-02T11:41:48.108Z",
     "updatedAt": "2026-04-02T11:41:48.108Z"
+  },
+  {
+    "id": 3,
+    "description": "Push ke GitHub",
+    "status": "todo",
+    "createdAt": "2026-04-02T12:27:23.630Z",
+    "updatedAt": "2026-04-02T12:27:23.630Z"
   }
 ]
