@@ -1,0 +1,16 @@
+[
+  {
+    "id": 1,
+    "description": "Belajar DOM",
+    "status": "todo",
+    "createdAt": "2026-04-02T11:41:41.795Z",
+    "updatedAt": "2026-04-02T11:41:41.795Z"
+  },
+  {
+    "id": 2,
+    "description": "Belajar JavaScript",
+    "status": "todo",
+    "createdAt": "2026-04-02T11:41:48.108Z",
+    "updatedAt": "2026-04-02T11:41:48.108Z"
+  }
+]
