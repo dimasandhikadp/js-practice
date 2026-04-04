@@ -66,6 +66,17 @@ switch (command) {
     break;
   case "delete":
     console.log("Menghapus task...");
+    const deleteId = Number(value);
+    const taskToDelete = tasks.find((task) => task.id === deleteId);
+
+    if(!taskToDelete){
+      console.log(`Task dengan ID ${deleteId} tidak ditemukan.`);
+    }else{
+      const filteredTask = tasks.filter((task) => task.id !== deleteId);
+      writeFileSync(filePath, JSON.stringify(filteredTask, null, 2));
+      console.log(`Task ID ${deleteId} berhasil dihapus.`)
+    }
+
     break;
   default:
     console.log("Perintah tidak valid...");
