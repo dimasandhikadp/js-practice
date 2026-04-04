@@ -1,14 +1,14 @@
 //JSON initial section
-const fs = require("fs");
+import { existsSync, writeFileSync, readFileSync } from "fs";
 const filePath = "tasks.json";
 
 //Cek apakah file json ada
-if (!fs.existsSync(filePath)) {
-  fs.writeFileSync(filePath, "[]");
+if (!existsSync(filePath)) {
+  writeFileSync(filePath, "[]");
 }
 
 //Baca isi file JSON
-const data = fs.readFileSync(filePath, "utf-8");
+const data = readFileSync(filePath, "utf-8");
 
 //Ubah isi file JSON ke Array
 const tasks = JSON.parse(data);
@@ -16,6 +16,7 @@ const tasks = JSON.parse(data);
 //Command initial section
 const command = process.argv[2];
 const value = process.argv[3];
+const newDescription = process.argv[4];
 
 switch (command) {
   case "add":
@@ -32,7 +33,7 @@ switch (command) {
     };
 
     tasks.push(newTask);
-    fs.writeFileSync(filePath, JSON.stringify(tasks, null, 2));
+    writeFileSync(filePath, JSON.stringify(tasks, null, 2));
 
     console.log("Task Berhasil ditambah ID:", newId);
     break;
@@ -50,6 +51,18 @@ switch (command) {
     break;
   case "update":
     console.log("Memperbarui task...");
+    const taskId = Number(value);
+    const taskToUpdate = tasks.find((task) => task.id === taskId);
+
+    if(!taskToUpdate){
+      console.log(`Task dengan ID ${taskId} tidak ditemukan.`)
+    }else{
+      taskToUpdate.description = newDescription;
+      taskToUpdate.updatedAt = new Date().toISOString;
+
+      writeFileSync(filePath, JSON.stringify(tasks, null, 2));
+      console.log(`Task ID ${taskId} berhasil diperbaruhi.`);
+    }
     break;
   case "delete":
     console.log("Menghapus task...");
