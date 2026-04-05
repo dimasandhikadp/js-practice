@@ -8,10 +8,46 @@ if (!existsSync(filePath)) {
 }
 
 //Baca isi file JSON
-const data = readFileSync(filePath, "utf-8");
+function loadTask() {
+  const data = readFileSync(filePath, "utf-8");
+  return JSON.parse(data);
+}
 
-//Ubah isi file JSON ke Array
-const tasks = JSON.parse(data);
+function saveTasks(tasks) {
+  writeFileSync(filePath, JSON.stringify(tasks, null, 2));
+}
+
+function findTaskById(tasks, id) {
+  return tasks.find((task) => task.id === id);
+}
+
+function printTask(tasks) {
+  if (tasks.length === 0) {
+    console.log("Belum ada task.");
+    return;
+  }
+
+  tasks.forEach((task) => {
+    console.log(`${task.id}. [${task.status}] ${task.description}`);
+  });
+}
+
+function updateTaskStatus(tasks, id, status) {
+  const task = findTaskById(tasks, id);
+
+  if (!task) {
+    console.log(`Task dengan ID ${id} tidak ditemukan`);
+    return;
+  }
+
+  task.status = status;
+  task.updateTaskStatus = new Date().toISOString();
+  saveTasks(tasks);
+
+  console.log(`Task ID ${id} berhadil diubah menjadi ${status}`);
+}
+
+const tasks = loadTask();
 
 //Command initial section
 const command = process.argv[2];
@@ -24,90 +60,68 @@ switch (command) {
 
     const now = new Date().toISOString();
     const newId = tasks.length === 0 ? 1 : tasks[tasks.length - 1].id + 1;
+
     const newTask = {
       id: newId,
       description: value,
       status: "todo",
       createdAt: now,
-      updatedAt: now
+      updatedAt: now,
     };
 
     tasks.push(newTask);
-    writeFileSync(filePath, JSON.stringify(tasks, null, 2));
+    saveTasks(tasks);
 
     console.log("Task Berhasil ditambah ID:", newId);
     break;
+
   case "list":
     console.log("Menampilkan task...");
-
-    if(tasks.length == 0){
-      console.log("Belum ada task.")
-    }else{
-      tasks.forEach(task => {
-        console.log(`${task.id}. [${task.status}] ${task.description}`);
-      });
-    }
-
+    printTask(tasks);
     break;
+
   case "update":
     console.log("Memperbarui task...");
     const taskId = Number(value);
     const taskToUpdate = tasks.find((task) => task.id === taskId);
 
-    if(!taskToUpdate){
-      console.log(`Task dengan ID ${taskId} tidak ditemukan.`)
-    }else{
+    if (!taskToUpdate) {
+      console.log(`Task dengan ID ${taskId} tidak ditemukan.`);
+    } else {
       taskToUpdate.description = newDescription;
-      taskToUpdate.updatedAt = new Date().toISOString;
+      taskToUpdate.updatedAt = new Date().toISOString();
 
-      writeFileSync(filePath, JSON.stringify(tasks, null, 2));
+      saveTasks(tasks);
       console.log(`Task ID ${taskId} berhasil diperbaruhi.`);
     }
     break;
+
   case "delete":
     console.log("Menghapus task...");
+
     const deleteId = Number(value);
     const taskToDelete = tasks.find((task) => task.id === deleteId);
 
-    if(!taskToDelete){
+    if (!taskToDelete) {
       console.log(`Task dengan ID ${deleteId} tidak ditemukan.`);
-    }else{
+    } else {
       const filteredTask = tasks.filter((task) => task.id !== deleteId);
-      writeFileSync(filePath, JSON.stringify(filteredTask, null, 2));
-      console.log(`Task ID ${deleteId} berhasil dihapus.`)
+      saveTasks(filteredTask);
+
+      console.log(`Task ID ${deleteId} berhasil dihapus.`);
     }
     break;
+
   case "mark-in-progress":
     console.log("Mengubah task menjadi in-progress...");
-    
-    const progressId = Number(value);
-    const taskInProgress = tasks.find((task) => task.id === progressId);
-
-    if (!taskInProgress) {
-      console.log(`Task dengan ID ${progressId} tidak ditemukan.`)
-    }else{
-      taskInProgress.status = "in-progress";
-      taskInProgress.updatedAt = new Date().toISOString();
-
-      writeFileSync(filePath, JSON.stringify(tasks, null, 2));
-      console.log(`Task ID ${progressId} berhasil diubah menjadi in-progress`)
-    }
+    updateTaskStatus(tasks, Number(value), "in-progress");
     break;
+
   case "mark-done":
     console.log("Mengubah task menjadi done...");
-
-    const doneId = Number(value);
-    const taskDone = tasks.find((task) => task.id === doneId);
-
-    if (!taskDone) {
-      console.log(`Task dengan ID ${doneId} tidak ditemukan.`)
-    }else{
-      taskDone.status = "done";
-      taskDone.updatedAt = new Date().toISOString();
-      writeFileSync(filePath, JSON.stringify(tasks, null, 2));
-      console.log(`Task ID ${doneId} berhasil diubah menjadi done.`)
-    }
+    updateTaskStatus(tasks, Number(value), "done");  
     break;
+    
   default:
     console.log("Perintah tidak valid...");
     break;
